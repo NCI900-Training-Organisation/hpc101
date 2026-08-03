@@ -1,4 +1,4 @@
-Common CPU Terminology 
+Common CPU Terminology
 -----------------------------------
 
 
@@ -8,7 +8,7 @@ Common CPU Terminology
     * **Time:** 10 min
 
     #. Understand common CPU terminologies.
-    #. Learn about CPU, cores, and CPU die.
+    #. Learn about CPU, cores, hardware threads, and CPU die.
 
     
 This section introduces some common terminologies with respect to CPU.
@@ -45,8 +45,26 @@ Core
 * Each core can independently execute tasks.
 * Modern CPUs typically have **multiple cores** to allow parallel processing (multitasking or multi-threaded applications).
 
-**Example:**  
-An Intel Core i7 CPU might have **6 cores**, allowing it to run 6 tasks simultaneously.
+**Example:**
+An Intel Core i7 CPU might have **6 cores**, so it can run 6 tasks at the same time on separate hardware.
+
+Hardware Thread (SMT / Hyper-Threading)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* A **hardware thread** is a stream of execution that a core can run.
+* With **SMT** (Simultaneous Multi-Threading, called **Hyper-Threading** on Intel), one physical core
+  presents **two or more** hardware threads to the operating system. The threads share the core's
+  execution units, so they are not equivalent to two separate cores.
+* This is why a tool such as ``lstopo`` or ``htop`` may report twice as many "CPUs" as the machine has
+  physical cores.
+
+**Example:**
+A 6-core i7 with Hyper-Threading enabled has **6 physical cores** but reports **12 hardware threads**.
+
+.. note::
+
+   On Gadi, a standard compute node has **48 physical cores**, and the PBS ``ncpus`` resource you
+   request counts these physical cores. When you size a job, count cores — not hardware threads.
 
 CPU Die
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -63,23 +81,19 @@ CPU Die
    :target: https://superuser.com/questions/324284/what-is-meant-by-the-terms-cpu-core-die-and-package
 
 
-Analogy
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Think of it like this:
-
-- **CPU** = An office building  
-- **Cores** = Workers inside the building  
-- **CPU Die** = The physical floor plan that holds the workers (and offices)
 
 
 NUMA (Non-Uniform Memory Access)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**NUMA** is a memory architecture used in **multi-CPU (multi-socket)** systems to improve performance.
+**NUMA** is a memory architecture in which memory is divided into regions, each attached to a particular
+group of cores, so that memory access time depends on *which* cores are doing the accessing.
 
-* Each CPU has its own **local memory**.
-* Access to local memory is **faster** than access to memory attached to another CPU (remote memory).
+* Each group of cores has its own **local memory**.
+* Access to local memory is **faster** than access to memory attached to another group (remote memory).
+* The group of cores plus its local memory is called a **NUMA node**.
+* Placing a process close to the memory it uses is therefore a real performance concern on HPC systems.
+
 
 
 CPU (Socket)
@@ -92,19 +106,24 @@ CPU (Socket)
    :target: https://www.alamy.com/stock-photo/cpu-socket.html?sortBy=relevant
    
 
-* In NUMA systems, multiple CPU sockets exist on the motherboard.
-* Each CPU/socket typically corresponds to one **NUMA node** with its own local memory.
+* A **socket** is the physical connector on the motherboard that holds one CPU package.
+* A multi-socket machine therefore has more than one CPU, and each socket has memory attached to it.
+* A socket maps to **at least one** NUMA node, but not always exactly one: modern CPUs can subdivide a
+  single socket into several NUMA nodes (AMD's NPS setting, Intel's Sub-NUMA Clustering).
+* On Gadi, the minimum number of cores under one node is any number of cores available on that node. However, you won't get control what cores are assigned to your job. For more than one node, the number of cores you request must be multitudes of cores on a single node. For example, this is multitudes of **48 cores** on a **normal** queue (Intel Cascade Lake) and multitudes of **104 cores** on a **normalsr** queue (Intel Sapphire Rapids). 
 
+.. tip::
 
-.. image:: ./figs/gpu-node.png
-   :width: 600px
-   :align: center
-   :alt: GPU Node Architecture
+   Do not assume *sockets == NUMA nodes*. Check the machine you are actually running on — ``lstopo``
+   reports both, and you will see this in the next section.
 
 .. admonition:: Key Points
    :class: hint
-    * A CPU is the main processor of a computer, often with multiple cores.
-    * A core is a processing unit within a CPU that can execute tasks independently.
-    * A CPU die is the physical silicon piece containing the cores and circuitry.
-    * NUMA is a memory architecture that allows each CPU to have its own local memory, improving performance in multi-CPU systems.
+
+   * A CPU is the main processor of a computer, often with multiple cores.
+   * A core is a processing unit within a CPU that can execute tasks independently.
+   * A hardware thread is a stream of execution within a core; with SMT a core can present more than one.
+   * A CPU die is the physical silicon piece containing the cores and circuitry.
+   * NUMA is a memory architecture that allows each CPU to have its own local memory, improving performance in multi-CPU systems.
+   * A socket usually maps to at least one NUMA node, but a single socket can expose several.
 

@@ -1,13 +1,13 @@
 Architecture of an HPC Machine
------------------------------
+-------------------------------
 
 .. admonition:: Overview
    :class: Overview
 
     * **Time:** 15 min
 
-      #. Learn about the architecture of a High-Performance Computing (HPC) machine.
-      #. Learn how to find the architecture of a node using ``lstopo`` command.
+    #. Learn about the architecture of a High-Performance Computing (HPC) machine.
+    #. Learn how to find the architecture of a node using the ``lstopo`` command.
 
 
 .. admonition:: Explanation
@@ -23,7 +23,7 @@ Architecture of an HPC Machine
 
 
 Personal Computer (PC) Architecture
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A laptop or desktop computer can be thought of as a single computing unit
 
@@ -35,10 +35,10 @@ A laptop or desktop computer can be thought of as a single computing unit
 HPC Architecture
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Unlike a PC, an HPC machine is composed of multiple interconnected components designed to deliver 
-significantly higher computational power. It typically consists of numerous nodes, with each node containing 
-multiple CPUs, GPUs, and its own dedicated memory. In essence, an HPC machine functions as a large computing 
-cluster.
+Unlike a PC, an HPC machine is composed of multiple interconnected components designed to deliver
+significantly higher computational power. It typically consists of numerous nodes, with each node containing
+multiple CPUs and its own dedicated memory, and — on some nodes — one or more GPUs. In essence, an HPC
+machine functions as a large computing cluster.
 
 .. important::
 
@@ -73,27 +73,44 @@ The architecture of an HPC machine typically includes:
 Architecture of a Node
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can find architecture of a node using the command ``lstopo`` on Gadi.
+A node contains sockets, cores, caches and memory arranged in a particular topology. A GPU node adds one or
+more GPUs, each attached to a specific part of that topology:
+
+.. image:: ./figs/gpu-node.png
+   :width: 600px
+   :align: center
+   :alt: Architecture of a GPU node, showing two sockets and the GPUs attached to each
+
+You can inspect the topology of a node on Gadi with ``lstopo``. Ask for console output explicitly —
+plain ``lstopo`` tries to open a graphical window, which will fail in a normal SSH session:
 
 .. code-block:: bash
    :linenos:
 
-   lstopo 
+   lstopo --of console
 
+``lstopo-no-graphics`` is an equivalent, text-only version of the same tool.
 
-If you want to save the output as an image, you can use the ``--of`` option to specify the output format, 
-such as PNG.
+If you want to save the output as an image instead, use ``--of`` to specify the format:
 
 .. code-block:: bash
    :linenos:
 
-   lstopo --of png topology.png 
+   lstopo --of png topology.png
+
+
+.. warning::
+
+   ``lstopo`` reports the topology of **the node you run it on**. Run it after logging in and you are
+   describing a *login* node, not a compute node — and the two are not the same hardware. To inspect a
+   compute node you need to run ``lstopo`` inside a job. Interactive jobs are covered in Session 2.
 
 
 .. admonition:: Key Points
    :class: hint
-   
-   * Each node in an HPC system can have multiple CPUs, GPUs, and independent memory.
+
+   * Each node in an HPC system can have multiple CPUs and independent memory; some nodes also have GPUs.
    * The architecture of an HPC machine includes various components such as head nodes, login nodes, compute nodes, and storage systems.
-   * lstopo is a command-line tool that provides a graphical representation of the hardware topology of a system.
+   * ``lstopo`` is a command-line tool that reports the hardware topology of a system.
    * It shows the arrangement of CPUs, memory, and other components in a node.
+   * It describes the node it runs on, so run it on a compute node to learn about compute nodes.
