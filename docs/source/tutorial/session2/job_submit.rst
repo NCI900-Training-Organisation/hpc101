@@ -75,11 +75,10 @@ Let's break down the job script:
 .. admonition:: Explanation
    :class: attention
 
-   * A standard Gadi node has 48 cores and 192 GB of memory.
+   * A Gadi normal queue node (Intel Cascade Lake) has 48 cores and 192 GB of memory.
    * Requesting ``ncpus=48`` therefore asks for every core on a single node, and requests larger than 48
      must be a multiple of 48 because they span whole nodes.
-   * On the ``normal`` queue you are charged for whole nodes, so a 48-core request costs the same whether
-     or not you use all the cores.
+   * If you request the x number of nodes you are charged for x number of nodes, whether or not you use all the cores.
    * Ask only for what you need. A small request like ``ncpus=1`` starts much sooner than a whole node,
      which matters when everyone in a workshop submits at once.
 
