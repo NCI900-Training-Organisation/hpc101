@@ -7,8 +7,8 @@ Job Scheduler
 
     * **Time:** 15 min
 
-      #. Learn about the job scheduler used in HPC clusters.
-      #. Understand the concept of batch scheduling and how it works.
+    #. Learn about the job scheduler used in HPC clusters.
+    #. Understand the concept of batch scheduling and how it works.
 
 HPC clusters like Gadi use a job scheduler to manage the execution of jobs. The job scheduler is responsible for 
 queuing, scheduling, and executing jobs on the cluster. It ensures that resources are allocated efficiently 
@@ -19,7 +19,7 @@ and that jobs are executed in a timely manner.
    :align: center
    :alt: Job Scheduler
 
-The job scheuler in Gadi is called ``PBS (Portable Batch System) Pro``. It is a widely used job scheduler in HPC environments. 
+The job scheduler in Gadi is called ``PBS (Portable Batch System) Pro``. It is a widely used job scheduler in HPC environments.
 PBS allows users to submit jobs, monitor their status, and manage job queues. It provides a command-line interface 
 for job submission and management.
 
