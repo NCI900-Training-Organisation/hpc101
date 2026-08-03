@@ -28,6 +28,11 @@ CPU (Central Processing Unit)
 * Responsible for executing instructions (code).
 * Can contain **multiple cores** inside a single chip or package.
 * Often referred to as a **processor**.
+* *Which* instructions a CPU can execute is defined by its **instruction set architecture (ISA)** —
+  every CPU is built to implement one. Gadi and virtually all Intel and AMD server CPUs implement
+  **x86_64** (also written *x86-64* or *AMD64*); ``uname -m`` reports it. Different CPUs sharing an ISA
+  can run the same binary, but that binary will not run on a CPU implementing a different ISA, such as
+  ``aarch64`` (64-bit ARM).
 
 **Example:**  
 A computer might have **1 CPU** with **8 cores**.

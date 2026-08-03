@@ -89,11 +89,10 @@ already, so ``mkdir -p`` here simply succeeds without doing anything.
 .. warning::
 
    ``/scratch`` is **temporary** storage. Files that have not been accessed for 100 days are automatically
-   purged. Never leave data you care about on ``/scratch`` — move it to ``/g/data`` or off the system.
+   purged. Never leave data you care about on ``/scratch`` — move it to ``/$HOME`` or off the system.
 
 Project data directory (``/g/data``) is persistent storage for data your project needs to keep. Unlike
-``/scratch`` it is not purged, so this is where curated datasets and results belong. Not every project has a
-``/g/data`` allocation.
+``/scratch`` there is no automated data removal process, the data lifetime usually lasts until the project retires. Not every project has a ``/g/data`` allocation - you need to include it in your grant application.
 
 .. code-block:: bash
    :linenos:
@@ -105,7 +104,7 @@ You can check how much space and compute your project has used with:
 .. code-block:: bash
    :linenos:
 
-    nci_account -P $PROJECT
+    nci_account -P $PROJECT -v
     lquota
 
 
@@ -148,5 +147,4 @@ Now you can clone the course repository to your home directory or scratch direct
    * The ``$PROJECT`` environment variable contains your **default** project only; use ``groups`` to list
      every project you belong to.
    * The scratch directory is a high-performance storage area for temporary data storage during computations,
-     and files untouched for 100 days are purged from it.
-   * ``/g/data`` is persistent project storage and is not purged — keep data you need there.
+     and files untouched for 100 days are purged from it. For important data, use you ``$HOME`` for it has snapshot backup.

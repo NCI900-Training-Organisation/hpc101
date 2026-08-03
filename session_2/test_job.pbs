@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Replace vp91 below with your own project code before submitting.
+
 #PBS -N test_job
 #PBS -P vp91
 #PBS -q normal
