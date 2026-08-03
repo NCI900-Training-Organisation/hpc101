@@ -81,6 +81,36 @@ CPU Die
    :target: https://superuser.com/questions/324284/what-is-meant-by-the-terms-cpu-core-die-and-package
 
 
+From Logic Gates to a Die
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A die is simply what you get when a very large number of **logic gates** are etched onto one piece of
+silicon. The hierarchy runs:
+
+* **Transistors** — microscopic switches patterned into the silicon.
+* **Logic gates** (AND, OR, NOT, XOR, ...) — a handful of transistors wired together to compute one
+  Boolean operation.
+* **Functional blocks** — millions of gates combined into adders, multipliers, registers, cache arrays,
+  and control logic.
+* **Core** — a complete set of those blocks, capable of fetching and executing instructions.
+* **Die** — the single slab of silicon carrying one or more cores plus shared caches and interconnect.
+
+So when a vendor quotes a transistor count or a process node (e.g. 7 nm), they are describing how many
+gates fit on the die and how small each one is. Smaller gates mean more of them per die, shorter signal
+distances, and lower energy per switch — which is what makes higher core counts and clock speeds
+possible in each new generation.
+
+.. note::
+
+   Logic gates are the level at which the hardware stops being "electronics" and starts being
+   *computation*: everything your code does eventually reduces to Boolean operations performed by gates
+   on a die.
+
+If you would like to follow this hierarchy all the way up for yourself, the book
+`The Elements of Computing Systems <https://www.nand2tetris.org>`_ by Noam Nisan and Shimon Schocken —
+widely known as **Nand to Tetris** — builds a complete working computer starting from a single NAND
+gate, going through logic gates, an ALU, a CPU, an assembler, a compiler, and finally an operating
+system to play the Tetris game. It is a great way to play Tetris. 
 
 
 NUMA (Non-Uniform Memory Access)
@@ -93,6 +123,7 @@ group of cores, so that memory access time depends on *which* cores are doing th
 * Access to local memory is **faster** than access to memory attached to another group (remote memory).
 * The group of cores plus its local memory is called a **NUMA node**.
 * Placing a process close to the memory it uses is therefore a real performance concern on HPC systems.
+* On Gadi, if you request cores less than the number of cores of a single node, even if you request the number of cores equal to the number of cores of a NUMA node. The job does not guarantee that the cores assigned to your job are from the same NUMA node. You need to request the entire node to have that control.
 
 
 
@@ -124,6 +155,8 @@ CPU (Socket)
    * A core is a processing unit within a CPU that can execute tasks independently.
    * A hardware thread is a stream of execution within a core; with SMT a core can present more than one.
    * A CPU die is the physical silicon piece containing the cores and circuitry.
+   * A die is built from billions of transistors wired into logic gates, which combine into the
+     functional blocks that make up a core.
    * NUMA is a memory architecture that allows each CPU to have its own local memory, improving performance in multi-CPU systems.
    * A socket usually maps to at least one NUMA node, but a single socket can expose several.
 
