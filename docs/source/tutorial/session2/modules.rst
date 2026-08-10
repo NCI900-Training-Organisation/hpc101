@@ -16,7 +16,7 @@ Modules
    1.  ``python3/3.11.0``
    2.  ``papi/7.0.1``
    3.  ``openmpi/4.0.1``
-   4.  ``cuda/12.3.2``
+   4.  ``cuda/12.8.0``
    5.  ``gcc/14.2.0``
 
 Finding Modules
