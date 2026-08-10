@@ -71,5 +71,43 @@ Exercise 6
    * The output is not printed to your terminal. Look for ``parallel.o<jobid>`` in the directory you
      submitted from.
    * The job requests ``ncpus=48``. Compare that with the thread count the program reports, and with the
-     speedup it achieves — they are not the same number, and the gap is what the rest of this session
-     is about.
+     speedup it achieves — they are not the same number, and the gap is what Exercise 7 is about.
+   * The program breaks its speedup into two parts. Only the second is due to threads: the first comes
+     from ``parallel=True`` changing the code Numba generates, which happens even on one core.
+
+Exercise 7
+^^^^^^^^^^^^^^^^^
+
+.. admonition:: Exercise
+   :class: todo
+
+   **Time:** 20 min
+
+   Exercise 6 gave you a speedup on 48 cores that was much smaller than 48. This exercise measures where
+   it goes.
+
+   * Run the job ``scaling.pbs`` in ``hpc101/session_3``. It runs ``scaling.py``, which times the same
+     parallel function on 1, 2, 4, 8, 16, 24 and 48 threads with the problem size held fixed.
+
+   * Sketch the speedup column against the thread count. Where does the curve start to bend away from the
+     straight line you would get if speedup equalled the number of threads?
+
+   * At 48 threads, what fraction of the ideal 48x did you actually achieve?
+
+   * Now look at the resource summary at the end of the ``.o`` file. Compare ``CPU Time Used`` against
+     ``NCPUs Requested`` multiplied by ``Walltime Used``. What fraction of the CPU time you were charged
+     for did the job actually use?
+
+.. admonition:: Hints
+   :class: hint
+
+   * Holding the problem size fixed while adding cores is **strong scaling** — the regime Amdahl's Law
+     describes. The efficiency column is the speedup divided by the thread count.
+   * Every row runs the identical function, so this table measures threading alone, with no compiler
+     effect mixed in.
+   * The last question is the important one. The parallel loop takes a fraction of a second, but the job
+     also spends time loading modules, activating the virtual environment, starting Python and compiling
+     the functions — and all of that is serial. Amdahl's Law applies to the whole job, not just the loop
+     you were timing.
+   * A loop that runs 6x faster inside a job that is mostly serial startup makes almost no difference to
+     how long the job takes, or to what it costs you.

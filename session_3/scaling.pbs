@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#PBS -N scaling
+#PBS -P vp91
+#PBS -q normal
+#PBS -l ncpus=48
+#PBS -l storage=gdata/vp91+scratch/vp91
+#PBS -l mem=190gb
+#PBS -l walltime=00:10:00
+#PBS -l wd
+
+module load python3/3.11.0
+
+source /g/data/vp91/Training-Venvs/intro-to-numba/bin/activate
+
+python3 scaling.py

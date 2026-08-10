@@ -48,7 +48,8 @@ def time_it(func, n):
 
 
 if __name__ == "__main__":
-    print("Threads available to Numba:", numba.get_num_threads())
+    max_threads = numba.get_num_threads()
+    print("Threads available to Numba:", max_threads)
 
     # Numba compiles each function the first time it is called, and compiling
     # a parallel=True function is considerably slower. Call both with a tiny
@@ -64,6 +65,18 @@ if __name__ == "__main__":
     print("Time with parallel:", parallel_time)
 
     print("Speedup: {:.2f}x".format(serial_time / parallel_time))
+
+    # Not all of that speedup comes from using more cores. Compiling with
+    # parallel=True also changes the code Numba generates, so run the same
+    # parallel function on a single thread to separate the two effects.
+    numba.set_num_threads(1)
+    one_thread_time, _ = time_it(reduction_with_parallel, N)
+    numba.set_num_threads(max_threads)
+
+    print("  of which, from compiling with parallel=True: {:.2f}x".format(
+        serial_time / one_thread_time))
+    print("  of which, from using {} threads:             {:.2f}x".format(
+        max_threads, one_thread_time / parallel_time))
 
     # both versions must agree, and every element should be exactly N.
     assert (serial_result == N).all()
