@@ -6,8 +6,8 @@ File Transfer
 
     * **Time:** 20 min
 
-      #. Learn how to copy files between your local machine and the HPC cluster.
-      #. Understand how to use Secure Copy Protocol (SCP) for file transfers.
+    #. Learn how to copy files between your local machine and the HPC cluster.
+    #. Understand how to use Secure Copy Protocol (SCP) for file transfers.
 
 In this section, we will learn how to copy files between your local machine and the HPC cluster. 
 This is essential for transferring data, scripts, and results. 
@@ -40,37 +40,38 @@ To copy a file from the HPC cluster to your local machine, use:
    * Similarly, adjust paths for copying files from the HPC cluster to your local machine.
 
 
-For Linix and MacOS users, the ``scp`` command is available by default in the terminal.
-
-.. code-block:: bash
-   :linenos:
-
-    # Change to Downloads directory     
-    cd $HOME/downloads
-
-    # Create a test file
-    touch file.txt
-
-    # Securely copy the file to Gadi
-    scp file.txt <username>@gadi.nci.org.au:/scratch/<project>>/<username>/
-
-This copies a file named ``file.txt`` from your local ``downloads`` directory to your scratch directory on Gadi.
-
-
-For Windows users, you can use tools like PuTTY or WinSCP to perform SCP operations. All the latest versions of
-Windows also support the ``scp`` command in the Command Prompt or PowerShell.
+For Linux and MacOS users, the ``scp`` command is available by default in the terminal.
 
 .. code-block:: bash
    :linenos:
 
     # Change to Downloads directory
-    cd C:\Users\<username>\Downloads
+    cd $HOME/Downloads
+
+    # Create a test file
+    touch file.txt
+
+    # Securely copy the file to Gadi
+    scp file.txt <username>@gadi-dm.nci.org.au:/scratch/<project>/<username>/
+
+This copies a file named ``file.txt`` from your local ``Downloads`` directory to your scratch directory on Gadi.
+
+
+For Windows users, you can use tools like PuTTY or WinSCP to perform SCP operations. All the latest versions of
+Windows also support the ``scp`` command in the Command Prompt or PowerShell. The example below uses
+**PowerShell**:
+
+.. code-block:: powershell
+   :linenos:
+
+    # Change to Downloads directory
+    cd "$env:USERPROFILE\Downloads"
 
     # Create a test file
     echo "This is a test file." > file.txt
 
     # Securely copy the file to Gadi
-    scp file.txt <username>@gadi.nci.org.au:/scratch/<project>>/<username>/
+    scp file.txt <username>@gadi-dm.nci.org.au:/scratch/<project>/<username>/
 
 
 To copy a directory and its contents, use the ``-r`` option with ``scp``:
@@ -86,7 +87,7 @@ In Linux and MacOS, do this:
    :linenos:
 
     # Change to Downloads directory
-    cd $HOME/downloads
+    cd $HOME/Downloads
 
     # Create a new directory
     mkdir my_directory
@@ -101,12 +102,12 @@ In Linux and MacOS, do this:
     cd ..
 
     # Securely copy the directory to Gadi
-    scp -r my_directory <username>@gadi.nci.org.au:/scratch/<project>>/<username>/
+    scp -r my_directory <username>@gadi-dm.nci.org.au:/scratch/<project>/<username>/
 
-In Windows, you can do the same with:
+In Windows PowerShell, you can do the same with:
 
 
-.. code-block:: bash
+.. code-block:: powershell
    :linenos:
 
     # Change to Downloads directory
@@ -126,14 +127,49 @@ In Windows, you can do the same with:
     cd ..
 
     # Securely copy the directory to Gadi
-    scp -r my_directory <username>@gadi.nci.org.au:/scratch/<project>/<username>/
+    scp -r my_directory <username>@gadi-dm.nci.org.au:/scratch/<project>/<username>/
 
 .. important::
-    Ensure that you have the necessary permissions to read/write files in the specified directories on both 
+    Ensure that you have the necessary permissions to read/write files in the specified directories on both
     your local machine and the HPC cluster.
+
+Use the Data Mover Nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The examples above connect to ``gadi-dm.nci.org.au`` rather than ``gadi.nci.org.au``. These are Gadi's
+**data mover nodes** — the data transfer nodes described in Session 1, tuned for moving data in and out of
+the system.
+
+Transfers to ``gadi.nci.org.au`` land on a login node, which is shared by every user on the system for
+editing files and submitting jobs. A large copy there is slow for you and disruptive for everyone else.
+Use ``gadi-dm.nci.org.au`` for anything beyond a handful of small files.
+
+Larger Transfers with rsync
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``scp`` copies everything, every time, and has no way to resume a transfer that fails partway through.
+For large or repeated transfers use ``rsync`` instead, which copies only what has changed and can pick up
+where it left off:
+
+.. code-block:: bash
+   :linenos:
+
+    rsync -avP my_directory <username>@gadi-dm.nci.org.au:/scratch/<project>/<username>/
+
+* ``-a`` preserves timestamps and permissions.
+* ``-v`` reports what is being transferred.
+* ``-P`` shows progress and keeps partial files, so an interrupted transfer can be resumed by re-running
+  the same command.
+
+.. note::
+
+   Re-running ``rsync`` after a completed transfer is cheap — it compares the two sides and copies nothing
+   if they already match. This makes it safe to use as a "make sure these are in sync" command.
 
 .. admonition:: Key Points
    :class: hint
 
    * Use ``scp`` to securely copy files between your local machine and the HPC cluster.
    * The ``-r`` option allows you to copy directories recursively.
+   * Connect to ``gadi-dm.nci.org.au``, the data mover nodes, rather than to a login node.
+   * Prefer ``rsync`` for large, repeated, or interrupted transfers.
