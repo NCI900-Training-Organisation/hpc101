@@ -104,6 +104,9 @@ will meet in practice:
 Many problems that scale poorly in the strong sense scale perfectly well in the weak sense, so it matters
 which one you are claiming when you report that a code "scales".
 
+Exercise 7 measures the strong scaling of a real program on Gadi, so you can see the curve bend away from
+the ideal for yourself.
+
 Other Practical Limits
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
